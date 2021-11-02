@@ -1,0 +1,14 @@
+#+TITLE: Readme
+
+
+* <Game tittle>
+ Is Atomic Frogs game for the 2021 Game off jam.
+ The Theme is BUG, which can be any meaning from it.
+
+* Todos/anotações
+Para não encher o kanban lá
+** TODO ignorar ou n ignorar .import?
+** TODO Como fazer/lidar com loading de area (a nao ser que o mapa seja pequeno)
+
+
+* Credits
