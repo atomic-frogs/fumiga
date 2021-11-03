@@ -1,8 +1,6 @@
 extends KinematicBody2D
 
-
-
-const SNAP_DIRECTION := Vector2.DOWN
+var SNAP_DIRECTION := Vector2.DOWN
 const SNAP_VECTOR_LENGTH := 32.0
 
 const STOP_ON_SLOPE := true
@@ -12,7 +10,7 @@ const MAX_SLOPE_ANGLE := deg2rad(46)
 export var speed := 600.0
 export var jump_strength := 1400.0
 export var gravity := 4500.0
-export var up_dir := Vector2.UP
+export var up_dir := Vector2(1,1)
 
 var _velocity := Vector2.ZERO
 var _snap_vector := SNAP_DIRECTION * SNAP_VECTOR_LENGTH
@@ -28,7 +26,11 @@ func _physics_process(delta: float) -> void:
 		Input.get_action_strength("move_right")
 		- Input.get_action_strength("move_left")
 	)
-
+	var vertical_direction := (
+		Input.get_action_strength("move_down")
+		- Input.get_action_strength("move_up")
+	)
+	var SNAP_DIRECTION := -up_dir
 	var is_jumping := Input.is_action_just_pressed("jump") and is_on_floor()
 	var is_jump_cancelled := Input.is_action_just_released("jump") and _velocity.y < 0.0
 	var is_landing := _snap_vector == Vector2.ZERO and is_on_floor()
@@ -38,8 +40,8 @@ func _physics_process(delta: float) -> void:
 			up_dir = Vector2(-horizontal_direction, 0)
 		else:
 			up_dir = Vector2(0, -horizontal_direction)
-#	elif is_on_ceiling() && Input.is_action_just_pressed("jump"):
-#		up_dir = -up_dir
+	elif is_on_ceiling() && Input.is_action_pressed("jump"):
+		up_dir = -up_dir
 
 
 	if up_dir.y != 0:
@@ -47,7 +49,9 @@ func _physics_process(delta: float) -> void:
 		_velocity.y += (gravity * -up_dir.y) * delta
 	else:
 		_velocity.x += (gravity * -up_dir.x) * delta
-		_velocity.y = horizontal_direction * speed
+		_velocity.y = (horizontal_direction * up_dir.x) * speed + vertical_direction * speed
+		
+
 
 	print(up_dir)
 	if is_on_floor():
@@ -73,7 +77,7 @@ func _physics_process(delta: float) -> void:
 
 	if (!is_on_ceiling() && !is_on_floor() && !is_on_wall()) && !is_jumping:
 		up_dir = Vector2.UP
-	if Input.is_action_just_pressed("e"):
+	if Input.is_action_just_pressed("e") or (Input.is_action_just_pressed("move_down")  and up_dir.y == 1 and !is_on_wall()):
 		up_dir = Vector2.UP
 
 	_velocity = move_and_slide_with_snap(
