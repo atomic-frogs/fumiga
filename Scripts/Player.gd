@@ -29,31 +29,41 @@ func _physics_process(delta: float) -> void:
 		- Input.get_action_strength("move_left")
 	)
 
-	var is_jumping := Input.is_action_just_pressed("jump") and ( is_on_floor() or walking_dir.x or walking_dir.y)
+	var is_jumping := Input.is_action_just_pressed("jump") and is_on_floor()
 	var is_jump_cancelled := Input.is_action_just_released("jump") and _velocity.y < 0.0
 	var is_landing := _snap_vector == Vector2.ZERO and is_on_floor()
 	
-	if is_on_wall() && walking_dir.x == 0:
-		walking_dir = Vector2(-horizontal_direction, 0)
-#	if is_on_floor():
-#			up_dir = Vector2.UP
-		
-	if walking_dir.y != 0:
+	if is_on_wall() && abs(horizontal_direction):
+		if up_dir.x == 0:
+			up_dir = Vector2(-horizontal_direction, 0)
+		else:
+			up_dir = Vector2(0, -horizontal_direction)
+#	elif is_on_ceiling() && Input.is_action_just_pressed("jump"):
+#		up_dir = -up_dir
+
+
+	if up_dir.y != 0:
 		_velocity.x = horizontal_direction * speed
-		_velocity.y += (gravity * -walking_dir.y)* delta
+		_velocity.y += (gravity * -up_dir.y) * delta
 	else:
-		_velocity.x = 0
+		_velocity.x += (gravity * -up_dir.x) * delta
 		_velocity.y = horizontal_direction * speed
-		
+
 	print(up_dir)
-#	if is_on_wall():
-#		up_dir = Vector2(-horizontal_direction, 0)
-	if is_jumping && walking_dir.x:
-		print(is_jumping)
-		_velocity.x = jump_strength  * -up_dir.x
+	if is_on_floor():
+		print("Is on floor:")
+	if is_on_wall():
+		print("Is on wall:")
+	if is_on_ceiling():
+		print("Is on ceiling")
+
+	if Input.is_action_just_pressed("jump") && abs(up_dir.x):
+		_velocity.x = jump_strength  * up_dir.x
+		_velocity.y = -jump_strength  
 		_snap_vector = Vector2.ZERO
-		walking_dir = Vector2.UP
+		up_dir = Vector2.UP
 	elif is_jumping:
+		print("is jumping2")
 		_velocity.y = -jump_strength  * -up_dir.y
 		_snap_vector = Vector2.ZERO
 	elif is_jump_cancelled:
@@ -61,13 +71,15 @@ func _physics_process(delta: float) -> void:
 	elif is_landing:
 		_snap_vector = SNAP_DIRECTION * SNAP_VECTOR_LENGTH
 
-#	if Input.is_action_just_pressed("e"):
-#		up_dir = -up_dir
+	if (!is_on_ceiling() && !is_on_floor() && !is_on_wall()) && !is_jumping:
+		up_dir = Vector2.UP
+	if Input.is_action_just_pressed("e"):
+		up_dir = Vector2.UP
 
 	_velocity = move_and_slide_with_snap(
 		_velocity, _snap_vector, up_dir, STOP_ON_SLOPE, MAX_SLIDES, MAX_SLOPE_ANGLE
 	)
-	#_velocity = move_and_slide(_velocity, up_dir)
+#	_velocity = move_and_slide(_velocity, up_dir)
 
 	# Visuals
 #	if not is_zero_approx(horizontal_direction):
