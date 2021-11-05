@@ -9,7 +9,7 @@ const MAX_SLOPE_ANGLE := deg2rad(46)
 
 export var speed := 600.0
 export var jump_strength := 1400.0
-export var gravity := 4500.0
+export var gravity := 3500.0
 export var up_dir := Vector2(1,1)
 
 var _velocity := Vector2.ZERO
