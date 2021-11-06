@@ -34,8 +34,14 @@ func _physics_process(delta: float) -> void:
 	var is_jumping := Input.is_action_just_pressed("jump") and is_on_floor()
 	var is_jump_cancelled := Input.is_action_just_released("jump") and _velocity.y < 0.0
 	var is_landing := _snap_vector == Vector2.ZERO and is_on_floor()
-	
-	if is_on_wall() && abs(horizontal_direction):
+	var not_sticky := false
+	for index in get_slide_count():
+		var collision := get_slide_collision(index)
+		if collision.collider.is_in_group("not_sticky"):
+			not_sticky = true
+			print("Sim")
+
+	if is_on_wall() && abs(horizontal_direction) &&  !not_sticky:
 		if up_dir.x == 0:
 			up_dir = Vector2(-horizontal_direction, 0)
 		else:
@@ -67,7 +73,6 @@ func _physics_process(delta: float) -> void:
 		_snap_vector = Vector2.ZERO
 		up_dir = Vector2.UP
 	elif is_jumping:
-		print("is jumping2")
 		_velocity.y = -jump_strength  * -up_dir.y
 		_snap_vector = Vector2.ZERO
 	elif is_jump_cancelled:
@@ -83,7 +88,6 @@ func _physics_process(delta: float) -> void:
 	_velocity = move_and_slide_with_snap(
 		_velocity, _snap_vector, up_dir, STOP_ON_SLOPE, MAX_SLIDES, MAX_SLOPE_ANGLE
 	)
-#	_velocity = move_and_slide(_velocity, up_dir)
 
 	# Visuals
 #	if not is_zero_approx(horizontal_direction):
