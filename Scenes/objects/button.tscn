@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Scripts/button.gd" type="Script" id=1]
+[ext_resource path="res://Assets/butao-fudido.png" type="Texture" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 49.0781, 26.1524 )
+
+[node name="button" type="Area2D"]
+script = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 1.41741, -26.4583 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 0, -16.5531 )
+texture = ExtResource( 2 )
+hframes = 2
+
+[node name="Label" type="Label" parent="."]
+margin_left = -23.6235
+margin_top = -30.5531
+margin_right = 23.3765
+margin_bottom = -16.5531
+text = "Press e"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="body_entered" from="." to="." method="_on_button_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_button_body_exited"]

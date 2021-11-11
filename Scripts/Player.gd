@@ -16,6 +16,7 @@ var _velocity := Vector2.ZERO
 var _snap_vector := SNAP_DIRECTION * SNAP_VECTOR_LENGTH
 var walking_dir := Vector2.UP
 
+onready var _coyote_timer: Timer = $CoyoteTimer
 #onready var _pivot: Node2D = $PlayerSideSkin
 #onready var _anim_player: AnimationPlayer = $PlayerSideSkin/AnimationPlayer
 #onready var _start_scale := _pivot.scale
@@ -31,7 +32,8 @@ func _physics_process(delta: float) -> void:
 		- Input.get_action_strength("move_up")
 	)
 	var SNAP_DIRECTION := -up_dir
-	var is_jumping := Input.is_action_just_pressed("jump") and is_on_floor()
+	var is_falling := _velocity.y > 0.0 
+	var is_jumping := Input.is_action_just_pressed("jump") and (is_on_floor() or not _coyote_timer.is_stopped()) 
 	var is_jump_cancelled := Input.is_action_just_released("jump") and _velocity.y < 0.0
 	var is_landing := _snap_vector == Vector2.ZERO and is_on_floor()
 	var not_sticky := false
@@ -55,33 +57,38 @@ func _physics_process(delta: float) -> void:
 		_velocity.y += (gravity * -up_dir.y) * delta
 	else:
 		_velocity.x += (gravity * -up_dir.x) * delta
-		_velocity.y = (horizontal_direction * up_dir.x) * speed + vertical_direction * speed
+		_velocity.y = clamp((horizontal_direction * up_dir.x) * speed + vertical_direction * speed, -speed, speed)
 		
 
 
-	print(up_dir)
-	if is_on_floor():
-		print("Is on floor:")
-	if is_on_wall():
-		print("Is on wall:")
-	if is_on_ceiling():
-		print("Is on ceiling")
+#	print(up_dir)
+#	if is_on_floor():
+#		print("Is on floor:")
+#	if is_on_wall():
+#		print("Is on wall:")
+#	if is_on_ceiling():
+#		print("Is on ceiling")
 
-	if Input.is_action_just_pressed("jump") && abs(up_dir.x):
+	if Input.is_action_just_pressed("jump") && abs(up_dir.x) :
 		_velocity.x = jump_strength  * up_dir.x
 		_velocity.y = -jump_strength  
 		_snap_vector = Vector2.ZERO
 		up_dir = Vector2.UP
+		_coyote_timer.stop()
 	elif is_jumping:
 		_velocity.y = -jump_strength  * -up_dir.y
 		_snap_vector = Vector2.ZERO
+		_coyote_timer.stop()
 	elif is_jump_cancelled:
 		_velocity.y = 0.0
 	elif is_landing:
 		_snap_vector = SNAP_DIRECTION * SNAP_VECTOR_LENGTH
+		_coyote_timer.stop()
 
 	if (!is_on_ceiling() && !is_on_floor() && !is_on_wall()) && !is_jumping:
 		up_dir = Vector2.UP
+	if is_falling && is_on_floor():
+		_coyote_timer.start()
 	if Input.is_action_just_pressed("e") or (Input.is_action_just_pressed("move_down")  and up_dir.y == 1 and !is_on_wall()):
 		up_dir = Vector2.UP
 
@@ -103,6 +110,6 @@ func _physics_process(delta: float) -> void:
 #	elif _velocity.y > 0.0:
 #		_anim_player.play("fall")
 
-
+	
 #func get_look_direction() -> float:
 #	return sign(_pivot.scale.x)
