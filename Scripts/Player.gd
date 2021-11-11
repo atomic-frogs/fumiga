@@ -41,7 +41,9 @@ func _physics_process(delta: float) -> void:
 		var collision := get_slide_collision(index)
 		if collision.collider.is_in_group("not_sticky"):
 			not_sticky = true
-			print("Sim")
+
+#	if Input.is_action_just_pressed("esc"):
+#		get_tree().paused = true
 
 	if is_on_wall() && abs(horizontal_direction) &&  !not_sticky:
 		if up_dir.x == 0:
@@ -49,7 +51,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			up_dir = Vector2(0, -horizontal_direction)
 	elif is_on_ceiling() && Input.is_action_pressed("jump"):
-		up_dir = -up_dir
+		up_dir = Vector2.DOWN
 
 
 	if up_dir.y != 0:
@@ -87,11 +89,19 @@ func _physics_process(delta: float) -> void:
 
 	if (!is_on_ceiling() && !is_on_floor() && !is_on_wall()) && !is_jumping:
 		up_dir = Vector2.UP
-	if is_falling && is_on_floor():
+	if is_falling && (is_on_floor() or is_on_ceiling() or is_on_wall()):
 		_coyote_timer.start()
+	if Input.is_action_just_pressed("e"):
+		up_dir = Vector2.UP
+ 
+	# Refatorar pelo amor de deus
 	if Input.is_action_just_pressed("e") or (Input.is_action_just_pressed("move_down")  and up_dir.y == 1 and !is_on_wall()):
 		up_dir = Vector2.UP
-
+	elif Input.is_action_just_pressed("e") or (Input.is_action_just_pressed("move_right")  and up_dir.x == 1 and !is_on_wall()):
+		up_dir = Vector2.UP
+	elif Input.is_action_just_pressed("e") or (Input.is_action_just_pressed("move_left")  and up_dir.x == -1 and !is_on_wall()):
+		up_dir = Vector2.UP
+	
 	_velocity = move_and_slide_with_snap(
 		_velocity, _snap_vector, up_dir, STOP_ON_SLOPE, MAX_SLIDES, MAX_SLOPE_ANGLE
 	)

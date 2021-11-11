@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Scenes/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Assets/iu.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Scenes/transitionCamera.gd" type="Script" id=4]
 [ext_resource path="res://Scenes/objects/button.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Scripts/Teste_Scene.gd" type="Script" id=6]
+[ext_resource path="res://Scenes/objects/Gate.tscn" type="PackedScene" id=7]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 64, 64, 0, 64, 0, 0, 64, 0 )
@@ -186,7 +187,7 @@ tile_data = PoolIntArray( 65531, 0, 0, 65532, 0, 0, 65533, 0, 0, 65534, 0, 0, 65
 ]]
 tile_set = SubResource( 8 )
 format = 1
-tile_data = PoolIntArray( 9, 0, 0, 10, 0, 0, 11, 0, 0, 12, 0, 0, 393211, 0, 0, 458747, 0, 0, 524283, 0, 0, 589819, 0, 0, 720919, 0, 0, 786455, 0, 0, 851991, 0, 0 )
+tile_data = PoolIntArray( 9, 0, 0, 10, 0, 0, 11, 0, 0, 12, 0, 0, 393211, 0, 0, 458747, 0, 0, 524283, 0, 0, 589819, 0, 0 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 position = Vector2( 1108.16, 303.073 )
@@ -212,5 +213,8 @@ position = Vector2( 594.66, 895.725 )
 [node name="button" parent="." instance=ExtResource( 5 )]
 position = Vector2( 414.66, 895.725 )
 
-[connection signal="_button_press" from="button2" to="." method="_on_button2__button_press"]
-[connection signal="_button_press" from="button" to="." method="_on_button__button_press"]
+[node name="Gate" parent="." instance=ExtResource( 7 )]
+position = Vector2( 1508.68, 898.425 )
+
+[connection signal="button_press" from="button2" to="." method="_on_button2_button_press"]
+[connection signal="button_press" from="button" to="." method="_on_button_button_press"]

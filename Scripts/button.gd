@@ -1,19 +1,19 @@
 extends Area2D
 
-signal _button_press
+signal button_press
 
 onready var sprite = $Sprite
-# Called when the node enters the scene tree for the first time.
+
 func _ready():
 	set_process(false)
 	$Label.hide()
 
-func _process(delta):
+func _process(_delta):
 	if (Input.is_action_just_pressed("e")):
 		button_pressed()
 
 func button_pressed():
-	emit_signal("_button_press")
+	emit_signal("button_press")
 	print("Pressionado")
 	if sprite.get_frame() == 0:
 		sprite.set_frame(1)

@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Assets/iu.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/Gate.gd" type="Script" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 59.1081, 94.0182 )
+
+[node name="Gate" type="StaticBody2D"]
+script = ExtResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 0, -100 )
+rotation = 1.57164
+texture = ExtResource( 1 )
+hframes = 6
+vframes = 5
+frame = 20
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -1.1225, -98.7766 )
+shape = SubResource( 1 )
